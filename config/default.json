@@ -1,3 +1,4 @@
 {
-  "mongoURI": "mongodb+srv://noplanb:noplanb123@cluster0-kruwl.mongodb.net/test?retryWrites=true&w=majority"
+  "mongoURI": "mongodb+srv://noplanb:noplanb123@cluster0-kruwl.mongodb.net/test?retryWrites=true&w=majority",
+  "jwtsecret": "noplanbSecret"
 }
