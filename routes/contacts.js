@@ -6,7 +6,7 @@ const Contact = require('../models/Contact');
 const auth = require('../middleware/auth');
 
 // @route   GET api/contacts
-// @desc    Get all users contacts
+// @desc    Get all user contacts
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
@@ -23,9 +23,40 @@ router.get('/', auth, async (req, res) => {
 // @route   POST api/contacts
 // @desc    Add new contact
 // @access  Private
-router.post('/', (req, res) => {
-  res.send('Add contact');
-});
+router.post(
+  '/',
+  [
+    auth,
+    [
+      check('name', 'Please enter name.')
+        .not()
+        .isEmpty(),
+      check('email', 'Please incldue a valid email.').isEmail()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    // return res.send('Passed');
+    const { name, email, phone, type } = req.body;
+    try {
+      const newContact = new Contact({
+        name,
+        email,
+        phone,
+        type,
+        user: req.user.id
+      });
+      const contact = await newContact.save();
+      res.json(contact);
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
 
 // @route   PUT api/contacts/:id
 // @desc    Update contact
