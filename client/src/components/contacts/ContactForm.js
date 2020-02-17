@@ -40,6 +40,7 @@ const ContactForm = () => {
     } else {
       updateContact(contact);
     }
+    clearAll();
   };
 
   const clearAll = () => {
