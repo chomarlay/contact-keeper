@@ -20,7 +20,12 @@ export default (state, action) => {
         ...state,
         contacts: state.contacts.filter(
           contact => contact.id !== action.payload
-        )
+        ),
+        // added extra to refresh the filtered list.  This was my experiment code, otherwise after delete the filtered list was not refreshed
+        filtered:
+          state.filtered !== null
+            ? state.filtered.filter(contact => contact.id !== action.payload)
+            : state.filtered
       };
 
     case UPDATE_CONTACT:

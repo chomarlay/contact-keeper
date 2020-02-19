@@ -7,20 +7,15 @@ const ContactFilter = () => {
   const text = useRef('');
 
   useEffect(() => {
-    console.log('useEffect ', text.current.value);
     if (filtered === null) {
-      console.log('useEffect ', text.current.value);
       text.current.value = '';
     }
   });
 
   const onChange = e => {
-    console.log(text.current.value);
     if (text.current.value !== '') {
-      console.log('Filter contact ', e.target.value);
       filterContacts(e.target.value);
     } else {
-      console.log('Clear Filter contact ', e.target.value);
       clearFilter();
     }
   };
