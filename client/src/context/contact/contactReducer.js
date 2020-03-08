@@ -5,7 +5,8 @@ import {
   SET_CURRENT,
   CLEAR_CURRENT,
   FILTER_CONTACTS,
-  CLEAR_FILTER
+  CLEAR_FILTER,
+  CONTACT_ERROR
 } from '../types';
 
 export default (state, action) => {
@@ -19,12 +20,12 @@ export default (state, action) => {
       return {
         ...state,
         contacts: state.contacts.filter(
-          contact => contact.id !== action.payload
+          contact => contact._id !== action.payload
         ),
         // added extra to refresh the filtered list.  This was my experiment code, otherwise after delete the filtered list was not refreshed
         filtered:
           state.filtered !== null
-            ? state.filtered.filter(contact => contact.id !== action.payload)
+            ? state.filtered.filter(contact => contact._id !== action.payload)
             : state.filtered
       };
 
@@ -57,6 +58,11 @@ export default (state, action) => {
       return {
         ...state,
         filtered: null
+      };
+    case CONTACT_ERROR:
+      return {
+        ...state,
+        error: null
       };
     default:
       return state;

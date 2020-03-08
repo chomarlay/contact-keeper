@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
-import uuid from 'uuid';
 import ContactReducer from './contactReducer';
 import ContactContext from './contactContext';
+import axios from 'axios';
 
 import {
   ADD_CONTACT,
@@ -10,51 +10,33 @@ import {
   SET_CURRENT,
   CLEAR_CURRENT,
   FILTER_CONTACTS,
-  CLEAR_FILTER
+  CLEAR_FILTER,
+  CONTACT_ERROR
 } from '../types';
 
 const ContactState = props => {
   const initialState = {
     current: null,
     filtered: null,
-    contacts: [
-      {
-        id: 1,
-        name: 'Micky Mouse',
-        email: 'MickyM@gmail.com',
-        phone: '111-111-1111',
-        type: 'Personal'
-      },
-      {
-        id: 2,
-        name: 'Daisy Duck',
-        email: 'DaisyD@gmail.com',
-        phone: '222-222-2222',
-        type: 'Personal'
-      },
-      {
-        id: 3,
-        name: 'Minnie Mouse',
-        email: 'MinnieM@gmail.com',
-        phone: '333-333-3333',
-        type: 'Personal'
-      },
-      {
-        id: 4,
-        name: 'Donald Duck',
-        email: 'DonaldD@gmail.com',
-        phone: '444-444-444',
-        type: 'Professional'
-      }
-    ]
+    contacts: [],
+    error: null
   };
 
   const [state, dispatch] = useReducer(ContactReducer, initialState);
 
   // Add Contact
-  const addContact = contact => {
-    contact.id = uuid.v4();
-    dispatch({ type: 'ADD_CONTACT', payload: contact });
+  const addContact = async contact => {
+    const config = {
+      headers: {
+        'Content-type': 'application/json'
+      }
+    };
+    try {
+      const res = await axios.post('/api/contacts', contact, config); // calling server side --- user.js post
+      dispatch({ type: 'ADD_CONTACT', payload: res.data });
+    } catch (error) {
+      dispatch({ type: 'CONTACT_ERROR', payload: error.response.data.msg });
+    }
   };
 
   // Delete Contact
@@ -88,6 +70,7 @@ const ContactState = props => {
         contacts: state.contacts,
         current: state.current,
         filtered: state.filtered,
+        error: state.error,
         addContact,
         deleteContact,
         setCurrent,
