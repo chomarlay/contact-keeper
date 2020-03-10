@@ -4,12 +4,14 @@ import ContactContext from './contactContext';
 import axios from 'axios';
 
 import {
+  GET_CONTACTS,
   ADD_CONTACT,
   DELETE_CONTACT,
   UPDATE_CONTACT,
   SET_CURRENT,
   CLEAR_CURRENT,
   FILTER_CONTACTS,
+  CLEAR_CONTACTS,
   CLEAR_FILTER,
   CONTACT_ERROR
 } from '../types';
@@ -24,6 +26,15 @@ const ContactState = props => {
 
   const [state, dispatch] = useReducer(ContactReducer, initialState);
 
+  // Get Contacts
+  const getContacts = async () => {
+    try {
+      const res = await axios.get('/api/contacts');
+      dispatch({ type: 'GET_CONTACTS', payload: res.data });
+    } catch (error) {
+      dispatch({ type: 'CONTACT_ERROR', payload: error.response.data.msg });
+    }
+  };
   // Add Contact
   const addContact = async contact => {
     const config = {
@@ -32,7 +43,7 @@ const ContactState = props => {
       }
     };
     try {
-      const res = await axios.post('/api/contacts', contact, config); // calling server side --- user.js post
+      const res = await axios.post('/api/contacts', contact, config); // calling server side --- contacts.js post
       dispatch({ type: 'ADD_CONTACT', payload: res.data });
     } catch (error) {
       dispatch({ type: 'CONTACT_ERROR', payload: error.response.data.msg });
@@ -43,10 +54,16 @@ const ContactState = props => {
   const deleteContact = id => {
     dispatch({ type: 'DELETE_CONTACT', payload: id });
   };
+  // Clear Contacts
+  const clearContacts = () => {
+    dispatch({ type: 'CLEAR_CONTACTS' });
+  };
+
   // Update Contact
   const updateContact = contact => {
     dispatch({ type: 'UPDATE_CONTACT', payload: contact });
   };
+
   // Set Current
   const setCurrent = contact => {
     dispatch({ type: 'SET_CURRENT', payload: contact });
@@ -71,12 +88,14 @@ const ContactState = props => {
         current: state.current,
         filtered: state.filtered,
         error: state.error,
+        getContacts,
         addContact,
         deleteContact,
         setCurrent,
         clearCurrent,
         updateContact,
         filterContacts,
+        clearContacts,
         clearFilter
       }}
     >
